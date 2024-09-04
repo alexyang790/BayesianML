@@ -210,3 +210,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Obsidian Workspace cache folder
+.obsidian/workspace
