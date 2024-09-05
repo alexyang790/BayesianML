@@ -213,3 +213,6 @@ rsconnect/
 
 # Obsidian Workspace cache folder
 .obsidian/workspace
+
+# remove slides folder
+Slides/
