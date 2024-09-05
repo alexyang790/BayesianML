@@ -4,22 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "46507af28e8dfd72",
+        "id": "f863a59fc513f4ef",
         "type": "tabs",
         "children": [
           {
-            "id": "c6f2b71d21fa6a91",
+            "id": "3e7a1f04e057b9ab",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "ClassNotes/W2 - Probability Theory.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "2c29f35afcce0e2a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ClassNotes/Untitled.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "README.md",
+                "file": "ClassNotes/Untitled.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "README.md",
+                "file": "ClassNotes/Untitled.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "README.md"
+                "file": "ClassNotes/Untitled.md"
               }
             }
           },
@@ -156,5 +169,11 @@
     }
   },
   "active": "78c658a3daac7b22",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "ClassNotes/W2 - Probability Theory.md",
+    "ClassNotes/Untitled.md",
+    "ClassNotes",
+    "README.md",
+    "untitled folder"
+  ]
 }
