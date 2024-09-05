@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ClassNotes/Untitled.md",
+                "file": "ClassNotes/W2 - Random Variable and Statistics.md",
                 "mode": "source",
                 "source": false
               }
@@ -98,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ClassNotes/Untitled.md",
+                "file": "ClassNotes/W2 - Random Variable and Statistics.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ClassNotes/Untitled.md",
+                "file": "ClassNotes/W2 - Random Variable and Statistics.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ClassNotes/Untitled.md"
+                "file": "ClassNotes/W2 - Random Variable and Statistics.md"
               }
             }
           },
@@ -168,12 +168,17 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "78c658a3daac7b22",
+  "active": "94112f51ab3aa343",
   "lastOpenFiles": [
+    "Slides/W1_Tues.pptx",
+    "Slides/W1_Thursday.pptx",
+    "Slides/W2_Tues.pptx",
+    "Slides/W2_Thurs.pptx",
+    "Slides",
+    "untitled folder",
     "ClassNotes/W2 - Probability Theory.md",
-    "ClassNotes/Untitled.md",
+    "ClassNotes/W2 - Random Variable and Statistics.md",
     "ClassNotes",
-    "README.md",
-    "untitled folder"
+    "README.md"
   ]
 }
