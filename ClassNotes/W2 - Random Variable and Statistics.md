@@ -103,3 +103,12 @@ The primary difference between continuous and discrete distributions lies in the
 **Definition of *multivariate distributions*:**
 - A **multivariate distribution** is a probability distribution that describes the behavior of multiple random variables simultaneously. These random variables may be dependent or independent, and the distribution captures the joint behavior and interactions between them.
 ### Multivariate Normal
+
+# Probability Distributions
+> why are we learning about them? 
+> 	- stats models represent complicated conditional probability distributions 
+
+# Variance 
+> tells you how 'certain' you can be about the expected value 
+
+# Properties of $E[X]$ and $Var[X]$

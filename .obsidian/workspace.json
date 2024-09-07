@@ -151,7 +151,7 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
@@ -168,8 +168,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "94112f51ab3aa343",
+  "active": "2c29f35afcce0e2a",
   "lastOpenFiles": [
+    "Slides/~$W2_Thurs.pptx",
     "Screenshot 2024-09-05 at 11.19.51.png",
     "Slides/W1_Tues.pptx",
     "Slides/W1_Thursday.pptx",
