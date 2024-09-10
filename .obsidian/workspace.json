@@ -30,9 +30,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "6555f67514b91128",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ClassNotes/W3 - Bayes Therom and Bayesian Inference.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -98,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ClassNotes/W2 - Random Variable and Statistics.md",
+                "file": "ClassNotes/W3 - Bayes Therom and Bayesian Inference.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ClassNotes/W2 - Random Variable and Statistics.md",
+                "file": "ClassNotes/W3 - Bayes Therom and Bayesian Inference.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ClassNotes/W2 - Random Variable and Statistics.md"
+                "file": "ClassNotes/W3 - Bayes Therom and Bayesian Inference.md"
               }
             }
           },
@@ -151,7 +163,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
@@ -168,8 +180,14 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "2c29f35afcce0e2a",
+  "active": "6555f67514b91128",
   "lastOpenFiles": [
+    "Screenshot 2024-09-10 at 11.05.44.png",
+    "ClassNotes/W2 - Probability Theory.md",
+    "ClassNotes/W2 - Random Variable and Statistics.md",
+    "ClassNotes/W3 - Bayes Therom and Bayesian Inference.md",
+    "Slides/W3_Tues.pptx",
+    "W3_Tues.pptx",
     "Slides/~$W2_Thurs.pptx",
     "Screenshot 2024-09-05 at 11.19.51.png",
     "Slides/W1_Tues.pptx",
@@ -178,8 +196,6 @@
     "Slides/W2_Thurs.pptx",
     "Slides",
     "untitled folder",
-    "ClassNotes/W2 - Probability Theory.md",
-    "ClassNotes/W2 - Random Variable and Statistics.md",
     "ClassNotes",
     "README.md"
   ]
