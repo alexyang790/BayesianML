@@ -43,6 +43,24 @@
           }
         ],
         "currentTab": 2
+      },
+      {
+        "id": "0a1aa9e701e8de76",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d7ee6a65cdf482eb",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ClassNotes/W2a - Probability Theory.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
       }
     ],
     "direction": "vertical"
@@ -161,11 +179,12 @@
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -178,12 +197,14 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "94112f51ab3aa343",
+  "active": "e3774d9826d2b01c",
   "lastOpenFiles": [
+    "ClassNotes/W2a - Probability Theory.md",
+    "Slides/W2_Tues.pdf",
+    "Homework/Homework 1 - Probability and Priors.pdf",
     "Slides/W2_Thurs.pdf",
     "ClassNotes/W3a - Bayes Therom and Bayesian Inference.md",
     "ClassNotes/W2b - Random Variable and Statistics.md",
-    "ClassNotes/W2a - Probability Theory.md",
     "ClassNotes/W3b -.md",
     "Solution to In-Class Exercise.pdf",
     "Screenshots/Screenshot 2024-09-05 at 11.19.51.png",
@@ -194,9 +215,6 @@
     "Slides/~$W2_Thurs.pptx",
     "Slides/W1_Tues.pptx",
     "Slides/W1_Thursday.pptx",
-    "Slides/W2_Tues.pptx",
-    "Slides/W2_Thurs.pptx",
-    "Slides",
     "README.md"
   ]
 }
