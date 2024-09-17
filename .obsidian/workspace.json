@@ -71,19 +71,8 @@
                 "source": false
               }
             }
-          },
-          {
-            "id": "731aaa5b43351710",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "Slides/W3_Thurs.pdf"
-              }
-            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -150,7 +139,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Slides/W3_Thurs.pdf",
+                "file": "Slides/W4_Tues.pdf",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -167,7 +156,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Slides/W3_Thurs.pdf",
+                "file": "Slides/W4_Tues.pdf",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -190,7 +179,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Slides/W3_Thurs.pdf"
+                "file": "Slides/W4_Tues.pdf"
               }
             }
           },
@@ -221,13 +210,13 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "731aaa5b43351710",
+  "active": "d5488f2fad35b1d3",
   "lastOpenFiles": [
     "ClassNotes/W4a - Bayesian Classification and Regression.md",
+    "Slides/W3_Thurs.pdf",
     "Slides/W4_Tues.pdf",
     "~$W4_Tues.pptx",
     "W4_Tues.pptx",
-    "Slides/W3_Thurs.pdf",
     "Slides/W2_Tues.pdf",
     "Slides/W3_Tues.pdf",
     "Slides/~$W3_Tues.pptx",
