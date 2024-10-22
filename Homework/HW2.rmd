@@ -1,0 +1,309 @@
+# Bayesian Homework 2
+
+### Alex Yang - zy7ts
+
+## Part I
+
+### 1. density plot for 2 continuous vars
+
+```{r}
+library(tidyverse)
+data <- read.csv("whitewine-training-ds6040.csv")
+
+ggplot(data, aes(x = fixed.acidity)) +
+  geom_density(fill = "blue", alpha = 0.5) +
+  ggtitle("Density Plot of Fixed Acidity") +
+  theme_minimal()
+
+ggplot(data, aes(x = density)) +
+  geom_density(fill = "green", alpha = 0.5) +
+  ggtitle("Density Plot of Density") +
+  theme_minimal()
+```
+
+> discovery of plot: the fix.acidity looks like a normal distribution that skewes to the left while the density variable plot also looks like a normal distribution that's skewes to the left
+
+### 2. Calculating the posterior distribution
+
+The conjugate prior for a normal likelihood is also a normal distribution. I then looked up the formula online for calculation with know variance (known variance is calculated below)
+
+```{r}
+var_fixed_acidity <- var(data$fixed.acidity)
+var_density <- var(data$density)
+
+posterior_calculator <- function(data, prior_mean, prior_precision, likelihood_variance) {
+  n <- length(data)
+  sample_mean <- mean(data)
+  
+  posterior_precision <- prior_precision + n / likelihood_variance
+  posterior_mean <- (prior_precision * prior_mean + (n / likelihood_variance) * sample_mean) / posterior_precision
+  
+  return(list(mean = posterior_mean, precision = posterior_precision))
+}
+
+# Uninformative prior for fixed acidity
+posterior_acidity_uninform <- posterior_calculator(
+  data$fixed.acidity,
+  prior_mean = 0,
+  prior_precision = 0.01,
+  likelihood_variance = var_fixed_acidity
+)
+
+# Informative prior for fixed acidity
+posterior_acidity_inf <- posterior_calculator(
+  data$fixed.acidity,
+  prior_mean = 10,
+  prior_precision = 100,
+  likelihood_variance = var_fixed_acidity
+)
+
+# Uninformative prior for density
+posterior_density_uninform <- posterior_calculator(
+  data$density,
+  prior_mean = 0,
+  prior_precision = 0.01,
+  likelihood_variance = var_fixed_acidity
+)
+
+# Informative prior for density 
+posterior_density_inf <- posterior_calculator(
+  data$density,
+  prior_mean = 10,
+  prior_precision = 100,
+  likelihood_variance = var_fixed_acidity
+)
+
+# Print results
+cat("Fixed Acidity Posteriors:\n")
+cat("Uninformative: Mean =", posterior_acidity_uninform$mean, ", Precision =", posterior_acidity_uninform$precision, "\n")
+cat("Informative: Mean =", posterior_acidity_inf$mean, ", Precision =", posterior_acidity_inf$precision, "\n")
+
+cat("Density Posteriors:\n")
+cat("Uninformative: Mean =", posterior_density_inf$mean, ", Precision =", posterior_density_uninform$precision, "\n")
+cat("Informative: Mean =", posterior_density_inf$mean, ", Precision =", posterior_acidity_inf$precision, "\n")
+```
+
+> We can see for the fixed.acidity the informative prior has a pretty big impact on the posterior mean while the informative/uninformative priors doesn't have a big impact on the posterior mean for the density. This suggests that the data overwhelmed both priors in the case for density variable.
+
+### 3. Impacts of hyperparameters and "bad" hyperparameters
+
+> When we chose the informative and uninformative priors for the fixed.acidity variable even though the posterior mean moves away from each other but it's not by a significant margin. However, it is still possible to choose a "bad" hyperparameter let's say one chooses 10,000 for the prior precision that would easily dominate the data and lead the posterior away from the true population parameters. If we use more extreme priors we can potentially see a biased estimation of true population parameters
+
+### 4. Repeat previous steps but with exponential likelihood
+
+note: I used Claude.ai here initially to tackle the code
+
+```{r}
+lambda_fixed_acidity <- 1 / mean(data$fixed.acidity)
+lambda_density <- 1 / mean(data$density)
+
+posterior_gamma <- function(data, prior_gamma, prior_beta) {
+  n <- length(data)
+  sum_x <- sum(data)
+  
+  posterior_gamma <- prior_gamma + n
+  posterior_beta <- prior_beta + sum_x
+  
+  return(list(gamma = posterior_gamma, beta = posterior_beta))
+}
+
+# posteriors for fixed acidity
+# Uninformative prior
+posterior_acidity_uninform <- posterior_gamma(
+  data$fixed.acidity,
+  prior_gamma = 0.01,
+  prior_beta = 0.01
+)
+
+# Informative prior
+posterior_acidity_inform <- posterior_gamma(
+  data$fixed.acidity,
+  prior_gamma = 10,
+  prior_beta = 1
+)
+
+# posteriors for density
+# Uninformative prior
+posterior_density_uninform <- posterior_gamma(
+  data$density,
+  prior_gamma = 0.01,
+  prior_beta = 0.01
+)
+
+# Informative prior
+posterior_density_inform <- posterior_gamma(
+  data$density,
+  prior_gamma = 1000,
+  prior_beta = 1000
+)
+
+calculate_stats <- function(posterior) {
+  list(
+    mean = posterior$gamma / posterior$beta,
+    variance = posterior$gamma / (posterior$beta^2)
+  )
+}
+
+stats_list <- lapply(
+  list(
+    acidity_uninform = posterior_acidity_uninform,
+    acidity_inform = posterior_acidity_inform,
+    density_uninform = posterior_density_uninform,
+    density_inform = posterior_density_inform
+  ),
+  calculate_stats
+)
+
+# Extract individual statistics from the stats_list
+stats_acidity_uninform <- stats_list$acidity_uninform
+stats_acidity_inform <- stats_list$acidity_inform
+stats_density_uninform <- stats_list$density_uninform
+stats_density_inform <- stats_list$density_inform
+
+# Print results
+cat("Fixed Acidity Posteriors (Exponential Likelihood):\n")
+cat("Uninformative: Gamma =", posterior_acidity_uninform$gamma, ", Beta =", posterior_acidity_uninform$beta, "\n")
+cat("  Mean =", stats_acidity_uninform$mean, ", Variance =", stats_acidity_uninform$variance, "\n")
+cat("Informative: Gamma =", posterior_acidity_inform$gamma, ", Beta =", posterior_acidity_inform$beta, "\n")
+cat("  Mean =", stats_acidity_inform$mean, ", Variance =", stats_acidity_inform$variance, "\n\n")
+
+cat("Density Posteriors (Exponential Likelihood):\n")
+cat("Uninformative: Gamma =", posterior_density_uninform$gamma, ", Beta =", posterior_density_uninform$beta, "\n")
+cat("  Mean =", stats_density_uninform$mean, ", Variance =", stats_density_uninform$variance, "\n")
+cat("Informative: Gamma =", posterior_density_inform$gamma, ", Beta =", posterior_density_inform$beta, "\n")
+cat("  Mean =", stats_density_inform$mean, ", Variance =", stats_density_inform$variance, "\n")
+```
+
+### 5. Impacts of hyperparameter
+
+> same thing as before the hyperparameter choices could influence the posterior distribution significantly. We see from our results that uninformative priors lead to very high mean and variances for both fixed acidity and density. While the informative priors ended up with a result that seems more reasonable. The results we got from this shows how sensitive the posterior is like with the changing hyperparameters showcasing the importance of choosing the correct prior and hyperparameters
+
+### 6. How do values differ between the two
+
+> we can see the exponential likelihood models results in a higher mean and variance. This shows that there is a higher uncertainty in predicting the posterior expected values compared to the normal model
+
+## Part II
+
+### 1. Interpretation of α
+
+> i believe that the value of alpha is our prior belief about how likely each category (A,C,F) is going to happen. For example, a bigger value of alpha for category A might mean that we believe that there is a higher chance of A being observed.
+
+### 2. Observation Generation & Plotting
+
+```{r}
+library(dirmult)
+library(reshape2)
+
+# counts for each category
+n <- as.numeric(table(data$wine_quality))
+
+# setting informative and uninformative alphas
+alpha_uninformative <- c(A=1, C=1, F=1)
+alpha_informative <- c(A = 500000, B = 500000, C = 500000)
+
+# setting posterior parameters
+posterior_uninformative <- alpha_uninformative + n 
+posterior_informative <- alpha_informative + n
+
+# generate samples
+samples_uninformative <- rdirichlet(1000, posterior_uninformative)
+samples_informative <- rdirichlet(1000, posterior_informative)
+
+# dataframe conversion and melting
+df_uninformative <- as.data.frame(samples_uninformative)
+df_informative <- as.data.frame(samples_informative)
+colnames(df_uninformative) <- c("A", "C", "F")
+colnames(df_informative) <- c("A", "C", "F")
+df_uninformative_melt <- melt(df_uninformative, variable.name = "Grade", value.name = "Proportion")
+df_informative_melt <- melt(df_informative, variable.name = "Grade", value.name = "Proportion")
+
+# uninformative prior plotting
+ggplot(df_uninformative_melt, aes(x = Grade, y = Proportion, fill = Grade)) +
+  geom_boxplot() +
+  ggtitle("Posterior Distributions with Uninformative Prior (α = 1)") 
+
+# informative prior plotting
+ggplot(df_informative_melt, aes(x = Grade, y = Proportion, fill = Grade)) +
+  geom_boxplot() +
+  ggtitle("Posterior Distributions with Informative Prior (α = 50)") 
+```
+
+### 3. Comment on the impact of prior choice
+
+> I see that for the informative prior we have a smaller range of variability across all three categories compared to the uninformative prior which has a wider spread of proportions across all three categories.
+
+## Part III
+
+### 1. hyperparameters
+
+```{r}
+alcohol_A <- data$alcohol[data$wine_quality == "A"]
+alcohol_F <- data$alcohol[data$wine_quality == "F"]
+
+# Calculate variances
+var_A <- var(alcohol_A)
+var_F <- var(alcohol_F)
+
+# Uninformative priors
+prior_mean_uninf <- 0
+prior_precision_uninf <- 0.01
+
+# Informative priors
+prior_mean_inf <- 12  # assuming average wine alcohol content around 12%
+prior_precision_inf <- 10  # higher precision for more informative prior
+```
+
+### 2&3 Posterior distribution for alcohol contents with F rating
+
+```{r}
+# Calculate posteriors
+post_A_uninf <- posterior_calculator(alcohol_A, prior_mean_uninf, prior_precision_uninf, var_A)
+post_F_uninf <- posterior_calculator(alcohol_F, prior_mean_uninf, prior_precision_uninf, var_F)
+post_A_inf <- posterior_calculator(alcohol_A, prior_mean_inf, prior_precision_inf, var_A)
+post_F_inf <- posterior_calculator(alcohol_F, prior_mean_inf, prior_precision_inf, var_F)
+
+# Calculate 
+diff_uninf_mean <- post_A_uninf$mean - post_F_uninf$mean
+diff_uninf_var <- post_A_uninf$precision + post_F_uninf$precision
+diff_inf_mean <- post_A_inf$mean - post_F_inf$mean
+diff_inf_var <- post_A_inf$precision + post_F_inf$precision
+
+cat("uninformed prior mean difference is", diff_uninf_mean, '\n')
+cat('uninformed prior variance difference is', diff_uninf_var, '\n')
+cat('informed prior mean difference is', diff_inf_mean, '\n')
+cat('informed prior variance difference is', diff_inf_var)
+```
+
+### 4. 95% HDI and plotting
+
+```{r}
+calculate_hdi <- function(mean, variance, ci = 0.95) {
+  alpha <- 1 - ci
+  z_score <- qnorm(1 - alpha/2)
+  margin <- z_score * sqrt(variance)
+  lower <- mean - margin
+  upper <- mean + margin
+  return(c(lower, upper))
+}
+
+# Calculate 95% HDI for both prior choices
+hdi_uninf <- calculate_hdi(diff_uninf_mean, diff_uninf_var)
+hdi_inf <- calculate_hdi(diff_inf_mean, diff_inf_var)
+
+cat("\n95% HDI for uninformative prior:", hdi_uninf[1], "to", hdi_uninf[2], "\n")
+cat("95% HDI for informative prior:", hdi_inf[1], "to", hdi_inf[2], "\n")
+
+# Visualize the posterior distributions
+x_uninf <- seq(diff_uninf_mean - 4*sqrt(diff_uninf_var), diff_uninf_mean + 4*sqrt(diff_uninf_var), length.out = 1000)
+y_uninf <- dnorm(x_uninf, diff_uninf_mean, sqrt(diff_uninf_var))
+
+x_inf <- seq(diff_inf_mean - 4*sqrt(diff_inf_var), diff_inf_mean + 4*sqrt(diff_inf_var), length.out = 1000)
+y_inf <- dnorm(x_inf, diff_inf_mean, sqrt(diff_inf_var))
+
+plot(x_uninf, y_uninf, type = "l", col = "blue", xlab = "Difference in Alcohol Content (A - F)", ylab = "Density", main = "Posterior Distributions of Alcohol Content Difference")
+lines(x_inf, y_inf, col = "red")
+legend("topright", legend = c("Uninformative Prior", "Informative Prior"), col = c("blue", "red"), lty = 1)
+abline(v = 0, lty = 2)
+```
+
+> surprisingly the prior choises didn't impact the distribution all that much.. I need to see the answer key and dive deeper into why this doesn't make sense later!

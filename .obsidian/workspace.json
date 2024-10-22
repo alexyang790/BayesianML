@@ -4,22 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "ca7f1b3a8a2d8ec2",
+        "id": "28841d0c41504dac",
         "type": "tabs",
         "children": [
           {
-            "id": "2ffedec3c8b1bb6e",
+            "id": "3e7faf03bcdb7c1b",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ClassNotes/W5a - Bayesian Inference Part II Sampler Strike Back.md",
+                "file": "ClassNotes/W6a - Stan.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "cff390f242b1f9d2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ClassNotes/W6b - Stan II.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -69,8 +82,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "30b28f97e6008431",
@@ -86,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ClassNotes/W5a - Bayesian Inference Part II Sampler Strike Back.md",
+                "file": "ClassNotes/W6b - Stan II.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ClassNotes/W5a - Bayesian Inference Part II Sampler Strike Back.md",
+                "file": "ClassNotes/W6b - Stan II.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ClassNotes/W5a - Bayesian Inference Part II Sampler Strike Back.md"
+                "file": "ClassNotes/W6b - Stan II.md"
               }
             }
           },
@@ -157,10 +169,14 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "2ffedec3c8b1bb6e",
+  "active": "cff390f242b1f9d2",
   "lastOpenFiles": [
-    "ClassNotes/W4a - Bayesian Classification and Regression.md",
+    "ClassNotes/W6a - Stan.md",
+    "ClassNotes/W6b - Stan II.md",
+    "ClassNotes/W5b - Approximating the Posterior.md",
     "ClassNotes/W5a - Bayesian Inference Part II Sampler Strike Back.md",
+    "mc-stan.org.md",
+    "ClassNotes/W4a - Bayesian Classification and Regression.md",
     "ClassNotes/W4b - Bayesian Computational Methods I - Introduction to Markov Chain Monte Carlo (MCMC).md",
     "Screenshots/Pasted image 20240922173726.png",
     "Slides/W3_Thurs.pdf",
