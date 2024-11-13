@@ -4,35 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "28841d0c41504dac",
+        "id": "b34dc7591a194b15",
         "type": "tabs",
         "children": [
           {
-            "id": "3e7faf03bcdb7c1b",
+            "id": "80a7b84d21d46a60",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ClassNotes/W6a - Stan.md",
+                "file": "W11b - Non-parametric Bayes.md",
                 "mode": "source",
                 "source": false
-              }
-            }
-          },
-          {
-            "id": "cff390f242b1f9d2",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ClassNotes/W6b - Stan II.md",
-                "mode": "source",
-                "source": false
-              }
+              },
+              "icon": "lucide-file",
+              "title": "W11b - Non-parametric Bayes"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -52,7 +41,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
             }
           },
           {
@@ -67,7 +58,9 @@
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-search",
+              "title": "Search"
             }
           },
           {
@@ -75,7 +68,9 @@
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {}
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
             }
           }
         ]
@@ -98,7 +93,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ClassNotes/W6b - Stan II.md",
+                "file": "ClassNotes/W9a - Hierarchical Bayesian Modeling and Bayesian Model Averaging.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -106,7 +101,9 @@
                 "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for W9a - Hierarchical Bayesian Modeling and Bayesian Model Averaging"
             }
           },
           {
@@ -115,10 +112,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ClassNotes/W6b - Stan II.md",
+                "file": "ClassNotes/W9a - Hierarchical Bayesian Modeling and Bayesian Model Averaging.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from W9a - Hierarchical Bayesian Modeling and Bayesian Model Averaging"
             }
           },
           {
@@ -129,7 +128,9 @@
               "state": {
                 "sortOrder": "frequency",
                 "useHierarchy": true
-              }
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
             }
           },
           {
@@ -138,8 +139,10 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ClassNotes/W6b - Stan II.md"
-              }
+                "file": "W11b - Non-parametric Bayes.md"
+              },
+              "icon": "lucide-list",
+              "title": "Outline of W11b - Non-parametric Bayes"
             }
           },
           {
@@ -147,7 +150,9 @@
             "type": "leaf",
             "state": {
               "type": "git-view",
-              "state": {}
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
             }
           }
         ],
@@ -155,8 +160,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -169,10 +173,17 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "cff390f242b1f9d2",
+  "active": "80a7b84d21d46a60",
   "lastOpenFiles": [
-    "ClassNotes/W6a - Stan.md",
+    "W11b - Non-parametric Bayes.md",
+    "ClassNotes/W9a - Hierarchical Bayesian Modeling and Bayesian Model Averaging.md",
+    "Homework/Homework3/HW3_Sampler.Rmd",
+    "Homework/Homework3/DS6040Fall2024_HW3.pdf",
+    "Homework/Homework3/coaldisasters-ds6040.csv",
+    "Homework/Homework3",
+    "Homework/untitled folder",
     "ClassNotes/W6b - Stan II.md",
+    "ClassNotes/W6a - Stan.md",
     "ClassNotes/W5b - Approximating the Posterior.md",
     "ClassNotes/W5a - Bayesian Inference Part II Sampler Strike Back.md",
     "mc-stan.org.md",
@@ -194,12 +205,7 @@
     "ClassNotes/W2b - Random Variable and Statistics.md",
     "ClassNotes/W3a - Bayes Therom and Bayesian Inference.md",
     "ClassNotes/W2a - Probability Theory.md",
-    "Slides/W1_Tues.pdf",
-    "Ho",
     "ClassNotes/W3b -.md",
-    "Slides/W4_Thurs.pdf",
-    "Slides/W4_Tues.pdf",
-    "~$W4_Tues.pptx",
     "Screenshots/Screenshot 2024-09-05 at 11.19.51.png",
     "Screenshots/Screenshot 2024-09-10 at 11.05.44.png",
     "README.md"
