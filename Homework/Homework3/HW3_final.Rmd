@@ -1,0 +1,182 @@
+# Part I: Changepoint detection and samplers
+
+## sampler
+```{r}
+# Load necessary libraries
+library(Rmpfr)
+library(tidyverse)
+
+# Load data
+dat <- read.csv("coaldisasters-ds6040.csv")
+
+# Define Gibbs sampler function
+gibbs_sampler <- function(iter, dat, a_mu, b_mu, a_lambda, b_lambda){
+  
+  # Initialize vectors and matrices for samples
+  mu_vec <- vector()
+  lambda_vec <- vector() 
+  k_prob_mat <- matrix(nrow = iter+1, ncol = 111)
+  k_samp_vec <- vector()
+  
+  # Initialize sampler with starting values
+  mu_vec[1] <- rgamma(1, a_mu, rate = b_mu)
+  lambda_vec[1] <- rgamma(1, a_lambda, rate = b_lambda)
+  k_prob_mat[1, ] <- rep(1/111, 111) # Uniform initial probabilities for k
+  k_samp_vec[1] <- 56 # Initial guess for k (arbitrary starting point)
+  
+  # Gibbs Sampler loop
+  for(i in 2:(iter + 1)){
+    # Update mu based on its conditional posterior
+    mu_vec[i] <- rgamma(1, a_mu + sum(dat[1:k_samp_vec[i - 1], 2]), rate = k_samp_vec[i - 1] + b_mu)
+    
+    # Update lambda based on its conditional posterior
+    lambda_vec[i] <- rgamma(1, a_lambda + sum(dat[(k_samp_vec[i - 1] + 1):112, 2]), rate = (112 - k_samp_vec[i - 1]) + b_lambda)
+    
+    # Calculate likelihood for each possible k
+    l_temp <- vector()
+    for(j in 1:111){  
+      l_temp[j] <- sum(log(mpfr(dpois(dat[1:j, 2], lambda = rep(mu_vec[i], j)), precBits = 100))) +
+                   sum(log(mpfr(dpois(dat[(j + 1):112, 2], lambda = rep(lambda_vec[i], 112 - j)), precBits = 100)))
+    }
+    l_temp <- mpfr(l_temp, precBits = 100)
+    k_prob_mat[i, ] <- as.numeric(exp(l_temp) / sum(exp(l_temp))) 
+    
+    # Sample k based on calculated probabilities
+    k_samp_vec[i] <- sample(size = 1, 1:111, prob = k_prob_mat[i, ])
+  }
+  
+  # Return dataframe with sampled values
+  toReturn <- data.frame(mu = mu_vec, lambda = lambda_vec, k = k_samp_vec)
+  return(toReturn)
+}
+
+# Run Gibbs sampler
+set.seed(42) 
+# I cut down the iterations to 200 beause it keeps crashing my computer
+results <- gibbs_sampler(200, dat, a_mu = 1, b_mu = 1, a_lambda = 1, b_lambda = 1)
+
+# Calculate EAP estimates and credible intervals for mu and lambda
+mu_eap <- mean(results$mu)
+lambda_eap <- mean(results$lambda)
+mu_credible_interval <- quantile(results$mu, probs = c(0.025, 0.975))
+lambda_credible_interval <- quantile(results$lambda, probs = c(0.025, 0.975))
+
+# Identify the top 5 most probable values of k
+k_counts <- sort(table(results$k), decreasing = TRUE)
+top_5_k <- as.numeric(names(k_counts)[1:5])
+
+# Output results
+cat("EAP for mu:", mu_eap, "\n")
+cat("95% ci for mu:", mu_credible_interval, "\n")
+cat("EAP for lambda:", lambda_eap, "\n")
+cat("95% ci for lambda:", lambda_credible_interval, "\n")
+cat("Top 5 most probable values of k:", top_5_k, "\n")
+
+# Plot posterior density 
+ggplot(results, aes(x = mu)) +
+  geom_density(fill = "blue", alpha = 0.5) +
+  labs(title = "Posterior Density for Mu", x = "Mu", y = "Density")
+
+ggplot(results, aes(x = lambda)) +
+  geom_density(fill = "red", alpha = 0.5) +
+  labs(title = "Posterior Density for Lambda", x = "Lambda", y = "Density")
+```
+> results: EAP for mu: 3.026307 
+95% ci for mu: 2.488038 3.651843 
+EAP for lambda: 0.9077465 
+95% ci for lambda: 0.684653 1.155762 
+Top 5 most probable values of k: 41 40 39 42 37 
+
+
+## Question (a)
+the EAP estimator for mu means the rate of coal minig disasters happening before change point is about 3.03 per year
+the 95% ci for mu means the rate of coal mining disasters happening before the change point is 95% chance between 2.49 and 3.65 per year
+
+the EAP estimator for lambda means the mean rate of coal mining disasters after the change point is approximatley 0.91
+the 95% ci for lambda means that we are 95% confident that the rate of coal mining disaster after the change point is between 0.68 and 1.16 per year
+
+From the top 5 most probable values of k we know that the change point most likely occured 41 years after 1851 and that would be 1892
+
+## Question (b) 
+The reason that EAP and confidence interval might not be the most adequate thing to report is because these two things measures the continuous likelyhood of mining disaster from happening while we are looking for a specific year where the change point is. In this case, looking at the distribution of k might be a better indicator since there might be multiple. 
+
+# Part 2
+
+>**Note:** Hi professor my brms and rstan is having problems compiling the code to c given the ARM mac architecture. i've been trying to trouble shoot it all day but i don't have any luck. thus I'm writing out the potential steps i would take for this problem including finding the variables and creating the logitstic regression models
+
+## Loading data and create new variable
+```{r}
+library(brms)
+
+# load data
+data <- read.csv("whitewine-training-ds6040.csv")
+
+# creating a new quality variable
+data <- data %>%
+  mutate(quality_binary = ifelse(quality %in% c("A"), 1, 0))
+```
+
+## Trying to find the best set of 3 variables 
+
+```{r}
+library(brms)
+library(dplyr)
+library(combinat)
+
+predictors <- names(data)[!names(data) %in% c("wine_quality", "quality_binary")]
+combinations <- combn(predictors, 3, simplify = FALSE) #generate combos of predictors (sets of 3s)
+
+# make df to store results
+results <- data.frame(
+  vars = character(),
+  waic = numeric(),
+  loo = numeric(),
+  stringsAsFactors = FALSE
+)
+
+# loop over each combination and calculate metrics
+for (vars in combinations) {
+  formula <- as.formula(paste("quality_binary ~", paste(vars, collapse = " + ")))
+  
+  # fit model
+  model <- brm(
+    formula = formula,
+    data = data,
+    family = bernoulli(),
+    chains = 2,   # Set to a lower number for quicker computation; increase for final run
+    iter = 1000   # Set lower for testing; increase for final run
+  )
+  
+  # calculate WAIC and LOO (found these on the internet for model comparison)
+  waic_val <- waic(model)$estimates["waic", "Estimate"]
+  loo_val <- loo(model)$estimates["looic", "Estimate"]
+  results <- rbind(results, data.frame(vars = paste(vars, collapse = ", "), waic = waic_val, loo = loo_val))
+}
+
+# find best vars by arranging waic
+results <- results %>% arrange(waic)
+head(results, 5)
+```
+
+## Find the Best Set of 3 Variables for Overall Classification
+```{r}
+model_overall <- brm(
+  formula = quality_binary ~ var1 + var2 + var3, #the variables we would have gotten from the previous step
+  data = data,
+  family = bernoulli(),
+  chains = 4,
+  iter = 2000
+)
+```
+
+## Find the Best Set of 3 Variables for A-rated Wine Classification
+```{r}
+model_A <- brm(
+  formula = quality_binary ~ var4 + var5 + var6,  #the variables we would have gotten from the previous step
+  data = data,
+  family = bernoulli(),
+  chains = 4,
+  iter = 2000
+)
+```
+
