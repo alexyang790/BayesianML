@@ -1,0 +1,9 @@
+# Bayesian Homework 2
+
+### Alex Yang - zy7ts
+
+
+```{r}
+data <- read.csv("/Users/alexyang/Git/BayesianML/Homework/sales-ds6040.csv")
+```
+
