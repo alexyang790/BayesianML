@@ -1,9 +1,238 @@
-# Bayesian Homework 2
+# Bayesian Homework 4
 
-### Alex Yang - zy7ts
+> Alex Yang - zy7ts homework 4 - Bayesian Hierarchical Modeling
 
+# Problem Statement
+
+The coffee shop chain is investigating how store manager personality traits (conscientiousness and neuroticism) impacts coffee and food sales. The stakeholders are interested in seeing whether coffee and food sales could be impacted differently based on manager personality traits; they are also interested in stores' performances given constant personality traits.
+
+# Approach
+
+> We will be using a **Bayesian Hierarchical Regression Model** to analyze the data. This model will enable us to account for clustering relationship within the store while accounting for the store managers' personality traits' impact on the coffee and food sales
+
+Therefore, we define our model as following:
+
+$$\text{sales}{ij} = \beta_0 + \beta_1 \cdot \text{food}{ij} + \beta_2 \cdot \text{con}i + \beta_3 \cdot \text{neur}i + \beta_4 \cdot (\text{con}i \times \text{food}{ij}) + \beta_5 \cdot (\text{neur}i \times \text{food}{ij}) + u{0j} + \epsilon{ij}$$
+
+Where:
+
+-   $\beta_0$ = Baseline sales
+
+-   $\beta_1$ = effects of the sale being food
+
+-   $\beta_2$ = effects of conscientiousness on coffee sales
+
+-   $\beta_3$ = effects of neuroticism on coffee sales
+
+-   $\beta_4$ = effect of conscientiousness on food sales (on top of coffee sales)
+
+-   $\beta_5$ = effect of neuroticism on food sales (on top of coffee sales)
+
+-   $sales_ij$ = sales for store j observation i
+
+-   $food_ij$ = food vs coffee indicator variable (food =1, coffee = 0)
+
+-   $con_i$ = $i_{th}$ store manager's conscientiousness score
+
+-   $neur_i$ = $i_{th}$ store manager's neuroticism score
+
+-   $u_0j$ = store level effects (random intercept)
+
+-   $\epsilon_ij$ = residual error for observation i
+
+This model accounts for:
+
+1.  clustering effects by the store
+2.  store manager's personality traits on sale
+3.  food vs coffee effects
+
+In other words, the model:
+
+# Prior Rationale
+
+-   Regression coefficients $\beta$ : we use weakly informed priors $Normal(0,1)$ to reflect uncertainty about how the beta variables are going to impact the model
+
+-   Variance distribution $u_0j$ : we use Half Cauchy $\text{Half Cauchy}(0,1)$ to account for the potential variability between stores; we also use the same prior to account for the variability in sales
+
+# Findings
+
+## 1. Parameter estimation
+
+Below are the key parameter estimates from the Bayesian hierarchical model:
+
+| Parameter                         | Estimate | Est. Error | l-95% CI | u-95% CI | Interpretation                                                                                |
+|---------|---------|---------|---------|---------|------------------------------|
+| **Intercept (β₀)**                | 0.49     | 0.33       | -0.13    | 1.18     | Baseline sales for coffee when personality traits are at their average values.                |
+| **Food (β₁)**                     | -0.84    | 0.11       | -1.05    | -0.63    | Food sales are on average lower than coffee sales                                             |
+| **Conscientiousness (β₂)**        | 0.29     | 0.44       | -0.60    | 1.15     | Positive effect of conscientiousness on coffee sales, though uncertainty remains.             |
+| **Neuroticism (β₃)**              | -0.36    | 0.30       | -0.98    | 0.23     | Negative effect of neuroticism on coffee sales, but with some uncertainty.                    |
+| **Food × Conscientiousness (β₄)** | 0.99     | 0.16       | 0.68     | 1.29     | Strong positive effect of conscientiousness on food sales, offsetting the base coffee effect. |
+| **Food × Neuroticism (β₅)**       | 0.11     | 0.10       | -0.09    | 0.31     | Neuroticism has a negligible offset effect on food sales relative to coffee sales.            |
+
+## 2. Store-level variability
+
+From the results we can see the random intercept's (the variable that accounts for store-level variability) standard deviation is 1.34 and a 95% confidence interval of [0.96, 1.92] which indicates there is a significant difference in baseline sales across different stores not accounting for store manager's personality traits.
+
+# Summary
+
+## Impact of Store Manager Traits on Sales 
+
+-   Coffee sales
+
+    -   If a store manager has the **conscientiousness** personality trait, it tends to improve coffee sales with some uncertainty in the results
+
+    -   If a store manager has the **neuroticism** personality trait, it tends to negatively impact coffee sales, though not by a large margin
+
+-   Food sales
+
+    -   If a store manager has the **conscientiousness** personality trait, it tends to improve food sales with confidence in the results
+
+    -   If a store manager has the **neuroticism** personality trait, there is a very weak positive effect on food sales
+
+## Store performance
+
+As we have discussed in the *Findings* section, there is a high variability across different stores in sales suggesting that there might be external factors that are impacting the sales as well on top of store manager's personality traits.
+
+The stores performances could be summarized into "average", "under performing", and "over performing"; the results could be found below:
+
+# Recommendations
+
+# Diagnostics
+
+# R Implementation
+
+## Loading Data and Necessary Packages
 
 ```{r}
-data <- read.csv("/Users/alexyang/Git/BayesianML/Homework/sales-ds6040.csv")
+library(tidyverse)
+library(brms)
+
+# Loading data
+sales_data <- read.csv("/Users/alexyang/Git/BayesianML/Homework/sales-ds6040.csv")
+
+# Quick overview of data 
+glimpse(data)
+summary(data)
+head(data, n=10)
+str(data)
+
+# Checking for missing values 
+colSums(is.na(data))
 ```
 
+## Visualize Data
+
+```{r}
+# Setting ggplot theme
+theme_set(theme_minimal())
+
+# Visualize sales by food type
+ggplot(sales_data, aes(x = food, y = sales)) +
+  geom_boxplot() +
+  labs(title = "Sales by Food Type", x = "Food (0 = Coffee, 1 = Food)", y = "Sales")
+
+# Scatterplot for Conscientiousness vs. Sales
+ggplot(sales_data, aes(x = con, y = sales, color = food)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Conscientiousness vs. Sales", x = "Conscientiousness", y = "Sales")
+
+# Scatterplot for Neuroticism vs. Sales
+ggplot(sales_data, aes(x = neur, y = sales, color = food)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Neuroticism vs. Sales", x = "Neuroticism", y = "Sales")
+```
+
+## Fit Model with `brms`
+
+```{r}
+# Define the Bayesian hierarchical regression model
+formula <- bf(
+  sales ~ food + con + neur + con:food + neur:food + (1 | store)
+)
+
+# Fitting model with brms
+fit_brms <- brm(
+  formula = formula,
+  data = sales_data,
+  prior = c(
+    prior(normal(0,1), class = "b"), # priors for fixed effects
+    prior(cauchy(0,1), class = "sd"), # prior for random intercepts
+    prior(cauchy(0,1), class = "sigma") # prior for residual 
+  ),
+  chains = 4,
+  iter = 2000,
+  warmup = 500,
+  seed = 42,
+  cores = 4
+)
+```
+
+## Summarize the Model
+
+```{r}
+summary(fit_brms)
+```
+
+```{r}
+# Extract fixed effects
+fixef(fit_brms)
+
+# Extract random effects
+ranef(fit_brms)
+
+# Posterior samples for key parameters
+posterior_samples_brms <- posterior_samples(fit_brms)
+posterior_summary <- posterior_samples_brms %>%
+  summarise(
+    mean_b_con = mean(b_con),
+    lower_b_con = quantile(b_con, 0.025),
+    upper_b_con = quantile(b_con, 0.975)
+  )
+print(posterior_summary)
+```
+
+## Store Level Performances 
+
+```{r}
+# Extract random effects for stores
+store_effects <- ranef(fit_brms)$store[, , "Intercept"]
+
+# Summarize random effects
+store_summary <- as_tibble(store_effects) %>%
+  mutate(
+    store_id = row_number(),
+    lower = Estimate - 1.96 * Est.Error,
+    upper = Estimate + 1.96 * Est.Error
+  )
+
+# Flag overperforming and underperforming stores
+store_summary <- store_summary %>%
+  mutate(
+    status = case_when(
+      Estimate > 1.34 ~ "Overperforming",
+      Estimate < -1.34 ~ "Underperforming",
+      TRUE ~ "Average"
+    )
+  )
+
+# Print summary
+print(store_summary)
+```
+
+## Diagnostics
+
+```{r}
+# Trace plot for parameters 
+plot(fit_brms)
+
+# Posterior predictive checks 
+pp_checks(fit_brms)
+
+# Extract fixed effects
+fixef(fit_brms)
+
+# Extract random effects
+ranef(fit_brms)
+```
