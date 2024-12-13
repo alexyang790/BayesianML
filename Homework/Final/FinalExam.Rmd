@@ -24,54 +24,325 @@ Our company, VusageTome is seeking to understand specific ways the user interact
 ### Exploratory Data Analysis
 
 ```{r}
-# Load libraries
 library(tidyverse)
-library(brms)
+library(ggplot2)
 
 # Load the dataset
-data <- read.csv("DS6040F24_finaldat.csv")
+data <- read.csv("DS6040F24_finaldat.csv")  # Replace with your actual file path
+
+# Inspect the structure of the dataset
+str(data)
+
+# Convert categorical columns to factors
+data <- data %>%
+  mutate(
+    gender = as.factor(gender),
+    day_of_week = factor(day_of_week, levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")),
+    time_of_day = factor(time_of_day, levels = c("Morning", "Midday", "Evening")),
+    nationality = as.factor(nationality)
+  )
 
 # Summary statistics
 summary(data)
 
-# Convert all required columns to a consistent type (character for categorical variables, numeric for continuous)
-data <- data %>%
-  mutate(
-    gender = as.character(gender),
-    day_of_week = as.character(day_of_week),
-    time_of_day = as.character(time_of_day),
-    nationality = as.character(nationality)
-  )
-
-# Pivot the data
-eda_plot <- data %>%
-  pivot_longer(
-    cols = c(age, gender, nationality, day_of_week, time_of_day),
-    names_to = "Variable",
-    values_to = "Value"
-  ) %>%
-  mutate(Value = as.character(Value))  # Ensure `Value` is consistently a character
-
-# Plot the data
-eda_plot_graph <- ggplot(eda_plot, aes(x = Value, y = MinPerBlock)) +
-  geom_boxplot(aes(fill = Variable), alpha = 0.7, outlier.shape = NA) +
-  geom_jitter(width = 0.2, alpha = 0.3) +
-  facet_wrap(~ Variable, scales = "free", ncol = 2) +
-  theme_minimal() +
+# 1. Distribution of MinPerBlock
+ggplot(data, aes(x = MinPerBlock)) +
+  geom_histogram(bins = 30, fill = "blue", alpha = 0.7) +
   labs(
-    title = "Exploratory Data Analysis: User Engagement",
-    x = "Variable Categories",
+    title = "Distribution of Minutes Per Block",
+    x = "Minutes Per Block",
+    y = "Count"
+  ) +
+  theme_minimal()
+
+# 2. Distribution of Age
+ggplot(data, aes(x = age)) +
+  geom_histogram(bins = 20, fill = "green", alpha = 0.7) +
+  labs(
+    title = "Distribution of Age",
+    x = "Age",
+    y = "Count"
+  ) +
+  theme_minimal()
+
+# 3. Engagement (MinPerBlock) by Gender
+ggplot(data, aes(x = gender, y = MinPerBlock, fill = gender)) +
+  geom_boxplot() +
+  labs(
+    title = "Engagement (MinPerBlock) by Gender",
+    x = "Gender",
     y = "Minutes Per Block"
   ) +
-  theme(
-    legend.position = "none",
-    strip.text = element_text(size = 12, face = "bold")
-  )
+  theme_minimal()
 
-# Print the plot
-print(eda_plot_graph)
+# 4. Engagement (MinPerBlock) by Time of Day
+ggplot(data, aes(x = time_of_day, y = MinPerBlock, fill = time_of_day)) +
+  geom_boxplot() +
+  labs(
+    title = "Engagement (MinPerBlock) by Time of Day",
+    x = "Time of Day",
+    y = "Minutes Per Block"
+  ) +
+  theme_minimal()
+
+# 5. Engagement by Day of the Week
+ggplot(data, aes(x = day_of_week, y = MinPerBlock, fill = day_of_week)) +
+  geom_boxplot() +
+  labs(
+    title = "Engagement (MinPerBlock) by Day of the Week",
+    x = "Day of Week",
+    y = "Minutes Per Block"
+  ) +
+  theme_minimal()
+
+# 6. Gender Distribution
+ggplot(data, aes(x = gender, fill = gender)) +
+  geom_bar() +
+  labs(
+    title = "Gender Distribution",
+    x = "Gender",
+    y = "Count"
+  ) +
+  theme_minimal()
+
+# 7. Nationality Distribution
+ggplot(data, aes(x = nationality, fill = nationality)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(
+    title = "Nationality Distribution",
+    x = "Nationality",
+    y = "Count"
+  ) +
+  theme_minimal()
+
+# 8. Correlation Heatmap for Numeric Features
+numeric_data <- data %>%
+  select_if(is.numeric)
+correlation_matrix <- cor(numeric_data, use = "complete.obs")
+ggplot(data = as.data.frame(as.table(correlation_matrix)), aes(Var1, Var2, fill = Freq)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0) +
+  labs(
+    title = "Correlation Heatmap",
+    x = "",
+    y = ""
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ### Model Building
 
+**Hierarchical effects:** vars(gender, age, nationality, time_of_day, day_of_week) are fixed effects because they are not specific to the user itself; while vars(user_id) has random effects since it's differences between individual users
+
+**Variation inference and samplers:** we'll first use fit framework we'll then examine if Hamiltonian MC is more reliable.
+
+```{r}
+# Load required libraries
+library(brms)
+
+# Define the model formula
+formula <- bf(
+  MinPerBlock ~ gender + age + nationality + day_of_week + time_of_day + 
+    (1 | user_id)  # Random effect for user-level variability
+)
+
+# Define priors
+priors <- c(
+  prior(normal(0, 5), class = "b"),        # Priors for fixed effects
+  prior(cauchy(0, 2), class = "sd")        # Priors for random effects
+)
+
+# Fit the model using Hamiltonian Monte Carlo
+fit <- brm(
+  formula = formula,
+  data = data,
+  family = gaussian(),  # Response family for continuous data
+  prior = priors,
+  chains = 2,           # Number of MCMC chains
+  iter = 2000,          # Total iterations
+  warmup = 1000,        # Warmup iterations
+  seed = 123            # Reproducibility
+)
+
+# Print the summary of the model
+summary(fit)
+```
+
 ### Validations
+
+> model has poor fit
+
+```{r}
+# Posterior predictive checks
+pp_check(fit)
+
+# Plot fixed effects
+plot(marginal_effects(fit))
+
+# Model convergence diagnostics
+plot(fit)
+```
+
+### Model Refitting
+
+```{r}
+# Define the base formula
+base_formula <- bf(
+  MinPerBlock ~ gender + age + nationality + day_of_week + time_of_day + 
+    (1 | user_id)
+)
+
+# Define priors
+priors <- c(
+  prior(normal(0, 5), class = "b"),
+  prior(cauchy(0, 2), class = "sd")
+)
+
+# Refit Model 1: Use Student-t Family for Robustness
+fit_student <- brm(
+  formula = base_formula,
+  data = data,
+  family = student(),  # Student-t family for heavy-tailed distributions
+  prior = priors,
+  chains = 2,
+  iter = 2000,
+  warmup = 1000,
+  seed = 123
+)
+
+# Refit Model 2: Add Interaction Terms for Temporal Patterns
+interaction_formula <- bf(
+  MinPerBlock ~ gender + age + nationality + day_of_week * time_of_day + 
+    (1 | user_id)
+)
+fit_interaction <- brm(
+  formula = interaction_formula,
+  data = data,
+  family = student(),  # Student-t family
+  prior = priors,
+  chains = 2,
+  iter = 2000,
+  warmup = 1000,
+  seed = 123
+)
+
+# Refit Model 3: Exclude Superusers
+# Identify superusers (top 5% of engagement)
+superusers <- data %>%
+  group_by(user_id) %>%
+  summarize(mean_engagement = mean(MinPerBlock)) %>%
+  filter(mean_engagement > quantile(mean_engagement, 0.95))
+
+# Filter out superusers
+data_no_superusers <- data %>%
+  filter(!user_id %in% superusers$user_id)
+
+# Fit the model without superusers
+fit_no_superusers <- brm(
+  formula = base_formula,
+  data = data_no_superusers,
+  family = student(),  # Student-t family
+  prior = priors,
+  chains = 2,
+  iter = 2000,
+  warmup = 1000,
+  seed = 123
+)
+
+# Evaluate Models with Posterior Predictive Checks
+pp_check(fit_student, ndraws = 100) + ggtitle("Model 1: Student-t Family")
+pp_check(fit_interaction, ndraws = 100) + ggtitle("Model 2: Interaction Terms")
+pp_check(fit_no_superusers, ndraws = 100) + ggtitle("Model 3: Without Superusers")
+
+# Compare Models with Leave-One-Out Cross-Validation
+loo_student <- loo(fit_student)
+loo_interaction <- loo(fit_interaction)
+loo_no_superusers <- loo(fit_no_superusers)
+
+# Print LOO comparison
+loo_compare(loo_student, loo_interaction, loo_no_superusers)
+
+# Additional Diagnostics
+# Plot marginal effects for the interaction model
+marginal_effects(fit_interaction)
+
+# Plot fixed effects to inspect coefficient estimates
+plot(fit_student)
+plot(fit_interaction)
+plot(fit_no_superusers)
+```
+
+```{r}
+# Define base formula
+base_formula <- bf(
+  MinPerBlock ~ gender + age + nationality + day_of_week + time_of_day + 
+    (1 | user_id)
+)
+
+# Define priors
+priors <- c(
+  prior(normal(0, 5), class = "b"),
+  prior(cauchy(0, 2), class = "sd")
+)
+
+# Fit Model 1: Student-t family for robustness
+fit_student <- brm(
+  formula = base_formula,
+  data = data,
+  family = student(),  # Heavy-tailed Student-t family
+  prior = priors,
+  chains = 2,
+  iter = 2000,
+  warmup = 1000,
+  seed = 123
+)
+
+# Fit Model 2: Mixture model with two Gaussian components
+fit_mixture <- brm(
+  bf(MinPerBlock ~ gender + age + nationality + day_of_week + time_of_day + (1 | user_id)),
+  data = data,
+  family = mixture(gaussian(), gaussian()),  # Mixture model
+  prior = c(
+    prior(normal(0, 5), class = "b"),
+    prior(cauchy(0, 2), class = "sd"),
+    prior(dirichlet(c(1, 1)), class = "theta")  # Priors for mixture weights
+  ),
+  chains = 2,
+  iter = 2000,
+  warmup = 1000,
+  seed = 123
+)
+
+# Fit Model 3: Splines for non-linear relationships
+fit_splines <- brm(
+  bf(MinPerBlock ~ s(age) + gender + nationality + day_of_week + time_of_day + (1 | user_id)),
+  data = data,
+  family = student(),  # Student-t family with splines
+  prior = priors,
+  chains = 2,
+  iter = 2000,
+  warmup = 1000,
+  seed = 123
+)
+
+# Posterior Predictive Checks for each model
+pp_check(fit_student, ndraws = 100) + ggtitle("Model 1: Student-t Family")
+pp_check(fit_mixture, ndraws = 100) + ggtitle("Model 2: Mixture Model")
+pp_check(fit_splines, ndraws = 100) + ggtitle("Model 3: Splines for Non-Linear Effects")
+
+# Compare Models using Leave-One-Out Cross-Validation
+loo_student <- loo(fit_student)
+loo_mixture <- loo(fit_mixture)
+loo_splines <- loo(fit_splines)
+loo_compare(loo_student, loo_mixture, loo_splines)
+
+# Visualize marginal effects for Model 3 (Splines)
+marginal_effects(fit_splines)
+
+# Plot fixed effects for all models
+plot(fit_student) + ggtitle("Fixed Effects: Model 1 (Student-t)")
+plot(fit_mixture) + ggtitle("Fixed Effects: Model 2 (Mixture)")
+plot(fit_splines) + ggtitle("Fixed Effects: Model 3 (Splines)")
+```
