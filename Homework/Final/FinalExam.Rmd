@@ -1,0 +1,30 @@
+# Bayesian Final Exam Report 
+
+> Alex Yang - zy7ts 
+
+## Problem Statement 
+
+
+## Executive Summary 
+
+
+## Introduction 
+
+
+## Methodology
+
+
+## Analysis and Results
+
+## Conclusion
+
+## Technical Details/Implementation
+
+### Exploratory Data Analysis 
+
+### Model Building
+
+
+### Validations 
+
+
