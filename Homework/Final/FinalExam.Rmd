@@ -1,18 +1,19 @@
-# Bayesian Final Exam Report 
+# Bayesian Final Exam Report
 
-> Alex Yang - zy7ts 
+> Alex Yang - zy7ts
 
-## Problem Statement 
+## Problem Statement
 
+Our company, VusageTome is seeking to understand specific ways the user interacts with the social network platform. There are four questions that this study seeks to address:
 
-## Executive Summary 
+1.  **User engagement:**
+2.  
 
+## Executive Summary
 
-## Introduction 
-
+## Introduction
 
 ## Methodology
-
 
 ## Analysis and Results
 
@@ -20,11 +21,57 @@
 
 ## Technical Details/Implementation
 
-### Exploratory Data Analysis 
+### Exploratory Data Analysis
+
+```{r}
+# Load libraries
+library(tidyverse)
+library(brms)
+
+# Load the dataset
+data <- read.csv("DS6040F24_finaldat.csv")
+
+# Summary statistics
+summary(data)
+
+# Convert all required columns to a consistent type (character for categorical variables, numeric for continuous)
+data <- data %>%
+  mutate(
+    gender = as.character(gender),
+    day_of_week = as.character(day_of_week),
+    time_of_day = as.character(time_of_day),
+    nationality = as.character(nationality)
+  )
+
+# Pivot the data
+eda_plot <- data %>%
+  pivot_longer(
+    cols = c(age, gender, nationality, day_of_week, time_of_day),
+    names_to = "Variable",
+    values_to = "Value"
+  ) %>%
+  mutate(Value = as.character(Value))  # Ensure `Value` is consistently a character
+
+# Plot the data
+eda_plot_graph <- ggplot(eda_plot, aes(x = Value, y = MinPerBlock)) +
+  geom_boxplot(aes(fill = Variable), alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(width = 0.2, alpha = 0.3) +
+  facet_wrap(~ Variable, scales = "free", ncol = 2) +
+  theme_minimal() +
+  labs(
+    title = "Exploratory Data Analysis: User Engagement",
+    x = "Variable Categories",
+    y = "Minutes Per Block"
+  ) +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(size = 12, face = "bold")
+  )
+
+# Print the plot
+print(eda_plot_graph)
+```
 
 ### Model Building
 
-
-### Validations 
-
-
+### Validations
