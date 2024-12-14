@@ -6,16 +6,57 @@
 
 Our company, VusageTome is seeking to understand specific ways the user interacts with the social network platform. There are four questions that this study seeks to address:
 
-1.  **User engagement:**
-2.  
+1.  **Demographics:** what demographic features are the most predictive in terms of number of engagments and the length of engagement
+2.  **Time Patterns:** hwo does time of the day and the day of week impact user engagement
+3.  **Superusers:** is there any users who engage significantly more than others (i.e. superuers)? If so how do we define and identify them
+4.  **Superuser demographics:** do the superusers have specific demographic features?
 
 ## Executive Summary
+
+1.  Demographics:
+    -   Age is a significant predictor for engagement where older users engaging more frequently
+
+    -   Gender and nationality doesn't show much effect on the general user engagement
+2.  Time patterns:
+    -   We can see highest level of user engagement on Fridays and Saturdays specifically in the evening
+
+    -   Wednesday and Thursdays see the lowest level of user engagement
+3.  Superusers:
+    -   We define the superusers as the ones that have the top 5% of engagement while adjusted for demographics and time pattern predictors above
+
+    -   The exisistence of superusers will impact the models because they introduce large amount of variability
+4.  Superusers demographics:
+    -   Within the superusers population we can see that male superusers have slightly higher average engagement than female superusers
+
+    -   We also see that superusers from first nations have the highest average engagement (over 9000 minutes) compared to Atlantian and Carthaginian superusers (both averaging 6000 minutes).
 
 ## Introduction
 
 ## Methodology
 
+1.  Model:
+    -   A Bayesian Hierarchical mode was used
+
+        -   We considered fixed effects (systematic variations that are considered constant across individuals) as vars(gender, age, nationality, day_of_week, time_of_day)
+
+        -   We considered random effects (variations that differ from user to user) as vars(user_id)
+
+    -   We used Hamiltonian Monte Carlo to fit the model
+2.  Response family:
+    -   We used Gaussian Distribution given the vars(MinPerBlack) is a continuous variable
+3.  Superusers:
+    -   We define superusers are the top 5% of the users as the ones who have top 5% engagement while adjusted for fixed effects
+
 ## Analysis and Results
+
+1.  Multilevel Hyper parameters:
+    -   We see a significant variability across users (which could be seen from our intercept which is 37.38). This shows that it is important for us to choose user_id as the random effect to account for individual differences
+2.  Fixed effects:
+    -   Age
+
+        -   estimate: 2.11 with a credible interval of 1.83 to 2.4
+
+        -   We estimate that the user engagement increases by approximately
 
 ## Conclusion
 
@@ -181,4 +222,72 @@ plot(marginal_effects(fit))
 
 # Model convergence diagnostics
 plot(fit)
+```
+
+### Superuser Identification
+
+```{r}
+# ---- Superuser Identification ---- #
+
+# Extract random effects for `user_id`
+random_effects <- as.data.frame(ranef(fit)$user_id)
+
+# Rename columns for clarity
+colnames(random_effects) <- c("Estimate", "Est.Error", "l-95% CI", "u-95% CI")
+
+# Add user_id as a column
+random_effects <- random_effects %>%
+  mutate(user_id = rownames(ranef(fit)$user_id))
+
+# Calculate the superuser threshold: Top 5% of random intercepts
+threshold <- quantile(random_effects$Estimate, 0.95)
+
+# Identify superusers based on the threshold
+superusers <- random_effects %>%
+  filter(Estimate > threshold)
+
+# Print identified superusers
+print(superusers)
+
+# ---- Analyze Demographics of Superusers ---- #
+
+# Merge superusers with the original dataset
+superuser_data <- data %>%
+  filter(user_id %in% superusers$user_id)
+
+# Summarize demographics of superusers
+superuser_demographics <- superuser_data %>%
+  group_by(gender, nationality, time_of_day, day_of_week) %>%
+  summarize(
+    avg_age = mean(age),
+    avg_minutes = mean(MinPerBlock),
+    count = n()
+  ) %>%
+  arrange(desc(avg_minutes))
+
+# Print the summary of superuser demographics
+print(superuser_demographics)
+
+# ---- Visualization of Superuser Demographics ---- #
+
+# Bar plot of average minutes by gender for superusers
+ggplot(superuser_demographics, aes(x = gender, y = avg_minutes, fill = gender)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Average Engagement of Superusers by Gender",
+    x = "Gender",
+    y = "Average Minutes"
+  ) +
+  theme_minimal()
+
+# Bar plot of average minutes by nationality for superusers
+ggplot(superuser_demographics, aes(x = nationality, y = avg_minutes, fill = nationality)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Average Engagement of Superusers by Nationality",
+    x = "Nationality",
+    y = "Average Minutes"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
