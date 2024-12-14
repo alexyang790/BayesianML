@@ -56,7 +56,47 @@ Our company, VusageTome is seeking to understand specific ways the user interact
 
         -   estimate: 2.11 with a credible interval of 1.83 to 2.4
 
-        -   We estimate that the user engagement increases by approximately
+        -   We estimate that the user engagement increases by approximately 2.11 minutes per additional year of age
+
+        -   This suggests that older users tend to spend more time on the platform
+
+    -   Gender
+
+        -   estimate: -1.14 with a credible interval of -10.21 to 7.54
+
+        -   We estimate male users engage slightly more than female users but this estimate is not statistically significant given our credible interval which crosses zero
+
+    -   Nationality
+
+        -   We did not find statistical differences in user engagement between different nationalities
+
+    -   Day of the week
+
+        -   estimates:
+
+            -   **Friday**: +26.36 minutes (credible interval: 19.36 to 33.02
+
+            -   **Saturday**: +25.38 minutes (credible interval: 18.86 to 31.87)
+
+            -   **Wednesday**: -15.37 minutes (credible interval: -22.05 to -8.56)
+
+            -   **Thursday**: -14.91 minutes (credible interval: -21.76 to -8.18)
+
+        -   From the results we can see that engagements peaks on Fridays and Saturdays
+
+        -   From the results we can see that engagement drops to the lowest on Wednesdays and Thursdays
+
+    -   Time of the Day
+
+        -   estimates:
+
+            -   **Evening:** +10.14 minutes (credible interval: 3.83 to 16.03)
+
+            -   **Midday:** no significant effects
+
+        -   from the results we can see that evening has higher angagement with 10.14 minutes higher than others
+3.  Superuser Analysis
+    -   
 
 ## Conclusion
 
