@@ -94,11 +94,21 @@ Our company, VusageTome is seeking to understand specific ways the user interact
 
             -   **Midday:** no significant effects
 
-        -   from the results we can see that evening has higher angagement with 10.14 minutes higher than others
+        -   from the results we can see that evening has higher engagement with 10.14 minutes higher than others
 3.  Superuser Analysis
-    -   
+    -   Superusers are defined as the top 5% of the users based on random intercept estimates
 
-## Conclusion
+    -   User #40 has the highest random intercept estimate (75.37) which means they consistently engage more than average user
+
+    -   Demographics of superusers:
+
+        -   Gender - most male superusers shows slightly higher level of engagement (10,500 minutes) compared to female superusers (10,000 minutes)
+
+            -   interpretation: gender differences among superusers are small but suggest there is a slight male dominance
+
+        -   Nationality - First Nations superusers shows the highest level of engagement (9,500 minutes) followed up Atlantian and Carthaginian users (both around 6,500 minutes)
+
+            -   interpretation: nationality differences among superusers are significant with the First Nation superusers showing higher level of engagement compared to others
 
 ## Technical Details/Implementation
 
